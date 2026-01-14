@@ -1,0 +1,110 @@
+# Enterprise Standard Configuration
+releaseRefs: ["main"]
+
+owner:
+  group: insurance-ai-team
+
+alerts:
+  email: mayurbhosalen9@gmail.com
+
+notify:
+  email:
+    to: mayurbhosalen9@gmail.com
+
+build:
+  looper:
+    enableDockerNoCache: false
+    enableDockerClean: false
+  docker:
+    app:
+      dockerFile: Dockerfile
+      buildArgs:
+        skipCodeCoverage: true
+        enableTestReporting: false
+
+deploy:
+  releaseType:
+  strategy: normal
+  rollbackOnError: true
+  namespace: insurance-ai
+
+helm:
+  values:
+    # Custom: Image Config (Added to support deployment)
+    image:
+      repository: ghcr.io/YOUR_USERNAME/insurance-backend
+      pullPolicy: IfNotPresent
+      tag: "latest"
+      pullSecrets:
+        - name: ghcr-secret
+
+    global:
+      metrics:
+        enabled: true
+      annotations:
+        sidecar.istio.io/inject: "false"
+
+    metadata:
+      labels:
+        wm.app: insurance-backend
+        wm.env: dev
+        ccm.serviceId: backend
+        ccm.serviceConfigVersion: "1.0"
+        wm.tlsmode: DISABLE
+      startupProbe:
+        enabled: "true"
+        path: "/health"
+        wait: 30
+        timeout: 3
+        probeInterval: 5
+        failureThreshold: 20
+      readinessProbe:
+        enabled: "true"
+        path: "/health"
+        wait: 0
+        timeout: 3
+        probeInterval: 10
+        failureThreshold: 4
+      livenessProbe:
+        enabled: "true"
+        path: "/health"
+        wait: 1
+        timeout: 3
+        probeInterval: 10
+        failureThreshold: 6
+
+    min:
+      cpu: "250m"
+      memory: "256Mi"
+    max:
+      cpu: "500m"
+      memory: "512Mi"
+
+    networking:
+      httpsEnabled: false
+      httpEnabled: true
+      pathPrefix: /
+      internalPort: 8000
+      externalPort: 8000
+      serviceType: ClusterIP
+      ports:
+        http:
+          internalPort: 8000
+          externalPort: 8000
+          protocol: TCP
+
+    env:
+      ENV: dev
+      DEBUG: "false"
+      CORS_ORIGINS: "*"
+      BASE_URL: "http://backend:8000"
+      AGENT_SERVER_URL: "http://agents:8080"
+      MONGO_DB: "insurance_ai"
+      # DB Connection string usually injected via secrets, but can be here for dev
+      # DATABASE_URL: ...
+
+    secrets:
+      file_refresh: true
+      vault:
+        enabled: true
+        role: backend

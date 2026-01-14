@@ -1,0 +1,109 @@
+# Enterprise Standard Configuration
+releaseRefs: ["main"]
+
+owner:
+  group: insurance-ai-team
+
+alerts:
+  email: mayurbhosalen9@gmail.com
+
+notify:
+  email:
+    to: mayurbhosalen9@gmail.com
+
+build:
+  looper:
+    enableDockerNoCache: false
+    enableDockerClean: false
+  docker:
+    app:
+      dockerFile: Dockerfile
+      buildArgs:
+        skipCodeCoverage: true
+        enableTestReporting: false
+
+deploy:
+  releaseType:
+  strategy: normal
+  rollbackOnError: true
+  namespace: insurance-ai
+
+helm:
+  values:
+    # Custom: Image Config
+    image:
+      repository: ghcr.io/YOUR_USERNAME/insurance-agents
+      pullPolicy: IfNotPresent
+      tag: "latest"
+      pullSecrets:
+        - name: ghcr-secret
+
+    global:
+      metrics:
+        enabled: true
+      annotations:
+        sidecar.istio.io/inject: "false"
+
+    metadata:
+      labels:
+        wm.app: insurance-agents
+        wm.env: dev
+        ccm.serviceId: agents
+        ccm.serviceConfigVersion: "1.0"
+        wm.tlsmode: DISABLE
+      startupProbe:
+        enabled: "true"
+        path: "/health"
+        wait: 30
+        timeout: 3
+        probeInterval: 5
+        failureThreshold: 20
+      readinessProbe:
+        enabled: "true"
+        path: "/health"
+        wait: 0
+        timeout: 3
+        probeInterval: 10
+        failureThreshold: 4
+      livenessProbe:
+        enabled: "true"
+        path: "/health"
+        wait: 1
+        timeout: 3
+        probeInterval: 10
+        failureThreshold: 6
+
+    min:
+      cpu: "250m"
+      memory: "256Mi"
+    max:
+      cpu: "500m"
+      memory: "512Mi"
+
+    networking:
+      httpsEnabled: false
+      httpEnabled: true
+      pathPrefix: /
+      internalPort: 8080
+      externalPort: 8080
+      serviceType: ClusterIP
+      ports:
+        http:
+          internalPort: 8080
+          externalPort: 8080
+          protocol: TCP
+
+    env:
+      ENV: dev
+      LOG_LEVEL: "INFO"
+      AZURE_DEPLOYMENT_NAME: "gpt-4o"
+      MCP_SERVER_URL: "http://insurance-mcp-server.default.svc.cluster.local:8080"
+      BACKEND_URL: "http://insurance-backend.default.svc.cluster.local:8000"
+      INSURANCE_API_BASE: "http://insurance-backend.default.svc.cluster.local:8000"
+      # Secrets should be injected via Vault or Secrets
+
+    secrets:
+      file_refresh: true
+      vault:
+        enabled: true
+        role: agents
