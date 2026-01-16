@@ -108,3 +108,8 @@ helm:
       vault:
         enabled: true
         role: backend
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""

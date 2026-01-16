@@ -107,3 +107,8 @@ helm:
       vault:
         enabled: true
         role: agents
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
