@@ -7,13 +7,13 @@ spec:
   project: default
   source:
     # This now points to your SINGLE Manifest Repository
-    repoURL: https://github.com/YOUR_USERNAME/insurance-ai-manifests.git
+    repoURL: https://github.com/chandan-akshronix/insurance-ai-manifests.git
     targetRevision: HEAD
     # Path is now the folder inside the manifest repo
     path: backend
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: insurance-ai
   syncPolicy:
     automated:
       prune: true
@@ -27,12 +27,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/insurance-ai-manifests.git
+    repoURL: https://github.com/chandan-akshronix/insurance-ai-manifests.git
     targetRevision: HEAD
     path: frontend
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: insurance-ai
   syncPolicy:
     automated:
       prune: true
@@ -46,12 +46,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/insurance-ai-manifests.git
+    repoURL: https://github.com/chandan-akshronix/insurance-ai-manifests.git
     targetRevision: HEAD
     path: agents
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: insurance-ai
   syncPolicy:
     automated:
       prune: true
@@ -65,12 +65,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/insurance-ai-manifests.git
+    repoURL: https://github.com/chandan-akshronix/insurance-ai-manifests.git
     targetRevision: HEAD
     path: mcp-server
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: insurance-ai
   syncPolicy:
     automated:
       prune: true
@@ -84,12 +84,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/YOUR_USERNAME/insurance-ai-manifests.git
+    repoURL: https://github.com/chandan-akshronix/insurance-ai-manifests.git
     targetRevision: HEAD
     path: claim-agent
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: insurance-ai
   syncPolicy:
     automated:
       prune: true
