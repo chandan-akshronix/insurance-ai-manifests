@@ -51,5 +51,5 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
 
 env:
-  VITE_API_URL: "http://insurance-backend.default.svc.cluster.local:8000"
-  VITE_AGENT_URL: "http://insurance-agents.default.svc.cluster.local:8080"
+  VITE_API_URL: "http://insurance-backend.insurance-ai.svc.cluster.local:8000"
+  VITE_AGENT_URL: "http://insurance-agents.insurance-ai.svc.cluster.local:8080"
