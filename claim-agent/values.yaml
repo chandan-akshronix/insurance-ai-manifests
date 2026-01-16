@@ -18,6 +18,14 @@ serviceAccount:
 podAnnotations:
   vault.hashicorp.com/agent-inject: "true"
   vault.hashicorp.com/role: "claim-agent"
+  vault.hashicorp.com/agent-inject-secret-config: "secret/data/insurance-ai/claim-agent"
+  vault.hashicorp.com/agent-inject-template-config: |
+    {{- with secret "secret/data/insurance-ai/claim-agent" -}}
+    export OPENAI_API_KEY="{{ .Data.data.OPENAI_API_KEY }}"
+    export AZURE_OPENAI_API_KEY="{{ .Data.data.AZURE_OPENAI_API_KEY }}"
+    export AZURE_OPENAI_ENDPOINT="{{ .Data.data.AZURE_OPENAI_ENDPOINT }}"
+    export DB_PASSWORD="{{ .Data.data.DB_PASSWORD }}"
+    {{- end -}}
 
 podSecurityContext: {}
 
