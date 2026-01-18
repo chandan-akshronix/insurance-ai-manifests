@@ -81,7 +81,7 @@ helm:
 
     # Override command to wait for secrets then source them
     command: ["/bin/sh", "-c"]
-    args: ["while [ ! -f /vault/secrets/config ]; do echo 'Waiting for Vault secrets...'; sleep 2; done && source /vault/secrets/config && uvicorn app_server.app:app --host 0.0.0.0 --port 8080"]
+    args: ["while [ ! -f /vault/secrets/config ]; do echo 'Waiting for Vault secrets...'; sleep 2; done && . /vault/secrets/config && uvicorn app_server.app:app --host 0.0.0.0 --port 8080"]
 
     min:
       cpu: "250m"
