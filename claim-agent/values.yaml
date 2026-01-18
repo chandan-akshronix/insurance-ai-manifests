@@ -27,10 +27,6 @@ podAnnotations:
     export DB_PASSWORD="{{ .Data.data.DB_PASSWORD }}"
     {{- end -}}
 
-  # Override command to source secrets
-  command: ["/bin/sh", "-c"]
-  args: ["source /vault/secrets/config && uvicorn app_server.app:app --host 0.0.0.0 --port 8002"]
-
 podSecurityContext: {}
 
 securityContext: {}
