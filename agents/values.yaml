@@ -46,10 +46,16 @@ helm:
         vault.hashicorp.com/agent-inject-secret-config: "secret/data/insurance-ai/agents"
         vault.hashicorp.com/agent-inject-template-config: |
           {{- with secret "secret/data/insurance-ai/agents" -}}
-          export OPENAI_API_KEY="{{ .Data.data.OPENAI_API_KEY }}"
+          export OPENAI_API_KEY="{{ .Data.data.AZURE_OPENAI_API_KEY }}"
           export AZURE_OPENAI_API_KEY="{{ .Data.data.AZURE_OPENAI_API_KEY }}"
           export AZURE_OPENAI_ENDPOINT="{{ .Data.data.AZURE_OPENAI_ENDPOINT }}"
+          export AZURE_DEPLOYMENT_NAME="{{ .Data.data.AZURE_DEPLOYMENT_NAME }}"
+          export MCP_SERVER_URL="{{ .Data.data.MCP_SERVER_URL }}"
           {{- end -}}
+
+    # Override command to source secrets
+    command: ["/bin/sh", "-c"]
+    args: ["source /vault/secrets/config && uvicorn app_server.app:app --host 0.0.0.0 --port 8080"]
 
     metadata:
       labels:
