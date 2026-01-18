@@ -1,18 +1,3 @@
-replicaCount: 1
-
-image:
-  repository: ghcr.io/chandan-akshronix/insurance-ai-claim-agent
-  pullPolicy: IfNotPresent
-  tag: "latest"
-
-imagePullSecrets:
-  - name: ghcr-secret
-nameOverride: ""
-fullnameOverride: ""
-
-serviceAccount:
-  create: true
-  annotations: {}
   name: ""
 
 podAnnotations:
