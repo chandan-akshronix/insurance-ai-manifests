@@ -37,6 +37,14 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.helm.values.image.repository }}:{{ .Values.helm.values.image.tag }}"
           imagePullPolicy: {{ .Values.helm.values.image.pullPolicy }}
+          {{- if .Values.helm.values.command }}
+          command:
+            {{- toYaml .Values.helm.values.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.helm.values.args }}
+          args:
+            {{- toYaml .Values.helm.values.args | nindent 12 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.helm.values.networking.internalPort }}
