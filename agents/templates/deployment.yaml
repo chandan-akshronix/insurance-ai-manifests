@@ -4,13 +4,6 @@ metadata:
   name: {{ include "agents.fullname" . }}
   labels:
     {{- include "agents.labels" . | nindent 4 }}
-    {{- if .Values.helm.values.global }}
-    {{- with .Values.helm.values.global.labels }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
-    {{- end }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   replicas: 1
   selector:
@@ -28,13 +21,6 @@ spec:
         {{- end }}
       labels:
         {{- include "agents.selectorLabels" . | nindent 8 }}
-        {{- if .Values.helm.values.global }}
-        {{- with .Values.helm.values.global.labels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- end }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
     spec:
       {{- with .Values.helm.values.image.pullSecrets }}
       imagePullSecrets:
@@ -62,21 +48,21 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
-          {{- if .Values.helm.values.global.livenessProbe.enabled }}
+          {{- if .Values.helm.values.metadata.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.helm.values.global.livenessProbe.path }}
+              path: {{ .Values.helm.values.metadata.livenessProbe.path }}
               port: http
-            failureThreshold: {{ .Values.helm.values.global.livenessProbe.failureThreshold }}
-            periodSeconds: {{ .Values.helm.values.global.livenessProbe.probeInterval }}
+            failureThreshold: {{ .Values.helm.values.metadata.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.helm.values.metadata.livenessProbe.probeInterval }}
           {{- end }}
-          {{- if .Values.helm.values.global.readinessProbe.enabled }}
+          {{- if .Values.helm.values.metadata.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.helm.values.global.readinessProbe.path }}
+              path: {{ .Values.helm.values.metadata.readinessProbe.path }}
               port: http
-            failureThreshold: {{ .Values.helm.values.global.readinessProbe.failureThreshold }}
-            periodSeconds: {{ .Values.helm.values.global.readinessProbe.probeInterval }}
+            failureThreshold: {{ .Values.helm.values.metadata.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.helm.values.metadata.readinessProbe.probeInterval }}
           {{- end }}
           resources:
             requests:
