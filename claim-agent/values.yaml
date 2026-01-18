@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/chandan-akshronix/insurance-claim-agent
+  repository: ghcr.io/chandan-akshronix/insurance-ai-claim-agent
   pullPolicy: IfNotPresent
   tag: "latest"
 
