@@ -27,12 +27,33 @@ deploy:
   strategy: normal
   rollbackOnError: true
   namespace: insurance-ai
+
+helm:
+  values:
+    # Custom: Image Config
+    image:
+      repository: ghcr.io/chandan-akshronix/insurance-ai-agents
+      pullPolicy: IfNotPresent
+      tag: "latest"
+      pullSecrets:
+        - name: ghcr-secret
+
+    global:
+      metrics:
+        enabled: true
+      annotations:
+        sidecar.istio.io/inject: "false"
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "agents"
         vault.hashicorp.com/agent-inject-secret-config: "secret/data/insurance-ai/agents"
         vault.hashicorp.com/agent-inject-template-config: |
           {{- with secret "secret/data/insurance-ai/agents" -}}
           export OPENAI_API_KEY="{{ .Data.data.AZURE_OPENAI_API_KEY }}"
           export AZURE_OPENAI_API_KEY="{{ .Data.data.AZURE_OPENAI_API_KEY }}"
           export AZURE_OPENAI_ENDPOINT="{{ .Data.data.AZURE_OPENAI_ENDPOINT }}"
+          export AZURE_DEPLOYMENT_NAME="{{ .Data.data.AZURE_DEPLOYMENT_NAME }}"
+          export MCP_SERVER_URL="{{ .Data.data.MCP_SERVER_URL }}"
+          {{- end -}}
         ccm.serviceId: agents
         ccm.serviceConfigVersion: "1.0"
         wm.tlsmode: DISABLE
@@ -58,6 +79,10 @@ deploy:
         probeInterval: 10
         failureThreshold: 6
 
+    # Override command to wait for secrets then source them
+    command: ["/bin/sh", "-c"]
+    args: ["while [ ! -f /vault/secrets/config ]; do echo 'Waiting for Vault secrets...'; sleep 2; done && source /vault/secrets/config && uvicorn app_server.app:app --host 0.0.0.0 --port 8080"]
+
     min:
       cpu: "250m"
       memory: "256Mi"
@@ -82,10 +107,9 @@ deploy:
       ENV: dev
       LOG_LEVEL: "INFO"
       AZURE_DEPLOYMENT_NAME: "gpt-4o"
-      MCP_SERVER_URL: "http://insurance-mcp-server.default.svc.cluster.local:8080"
-      BACKEND_URL: "http://insurance-backend.default.svc.cluster.local:8000"
-      INSURANCE_API_BASE: "http://insurance-backend.default.svc.cluster.local:8000"
-      # Secrets should be injected via Vault or Secrets
+      MCP_SERVER_URL: "http://insurance-mcp-server.insurance-ai.svc.cluster.local:7000"
+      BACKEND_URL: "http://insurance-backend.insurance-ai.svc.cluster.local:8000"
+      INSURANCE_API_BASE: "http://insurance-backend.insurance-ai.svc.cluster.local:8000"
 
     secrets:
       file_refresh: true
